@@ -1969,6 +1969,33 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#smart_effector" class="md-nav__link">
+    [smart_effector]
+  </a>
+  
+    <nav class="md-nav" aria-label="[smart_effector]">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#set_smart_effector" class="md-nav__link">
+    SET_SMART_EFFECTOR
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#reset_smart_effector" class="md-nav__link">
+    RESET_SMART_EFFECTOR
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#stepper_enable" class="md-nav__link">
     [stepper_enable]
   </a>
@@ -3875,6 +3902,33 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#smart_effector" class="md-nav__link">
+    [smart_effector]
+  </a>
+  
+    <nav class="md-nav" aria-label="[smart_effector]">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#set_smart_effector" class="md-nav__link">
+    SET_SMART_EFFECTOR
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#reset_smart_effector" class="md-nav__link">
+    RESET_SMART_EFFECTOR
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#stepper_enable" class="md-nav__link">
     [stepper_enable]
   </a>
@@ -4128,7 +4182,7 @@ parameters. For example: <code>SET_SERVO SERVO=myservo ANGLE=5.3</code>. In this
 document, the commands and parameters are shown in uppercase, however
 they are not case sensitive. (So, "SET_SERVO" and "set_servo" both run
 the same command.)</p>
-<p>This section is organized my Klipper module name, which generally
+<p>This section is organized by Klipper module name, which generally
 follows the section names specified in the
 <a href="Config_Reference.html">printer configuration file</a>. Note that some
 modules are automatically loaded.</p>
@@ -4348,16 +4402,16 @@ changes the active hotend.</p>
 [ADVANCE=&lt;pressure_advance&gt;]
 [SMOOTH_TIME=&lt;pressure_advance_smooth_time&gt;]</code>: Set pressure advance
 parameters of an extruder stepper (as defined in an
-<a href="Config_Reference#extruder">extruder</a> or
-<a href="Config_Reference#extruder_stepper">extruder_stepper</a> config section).
+<a href="Config_Reference.html#extruder">extruder</a> or
+<a href="Config_Reference.html#extruder_stepper">extruder_stepper</a> config section).
 If EXTRUDER is not specified, it defaults to the stepper defined in
 the active hotend.</p>
 <h4 id="set_extruder_rotation_distance">SET_EXTRUDER_ROTATION_DISTANCE<a class="headerlink" href="#set_extruder_rotation_distance" title="Permanent link">&para;</a></h4>
 <p><code>SET_EXTRUDER_ROTATION_DISTANCE EXTRUDER=&lt;config_name&gt;
 [DISTANCE=&lt;distance&gt;]</code>: Set a new value for the provided extruder
 stepper's "rotation distance" (as defined in an
-<a href="Config_Reference#extruder">extruder</a> or
-<a href="Config_Reference#extruder_stepper">extruder_stepper</a> config section).
+<a href="Config_Reference.html#extruder">extruder</a> or
+<a href="Config_Reference.html#extruder_stepper">extruder_stepper</a> config section).
 If the rotation distance is a negative number then the stepper motion
 will be inverted (relative to the stepper direction specified in the
 config file). Changed settings are not retained on Klipper reset. Use
@@ -4368,10 +4422,10 @@ current rotation distance.</p>
 <h4 id="sync_extruder_motion">SYNC_EXTRUDER_MOTION<a class="headerlink" href="#sync_extruder_motion" title="Permanent link">&para;</a></h4>
 <p><code>SYNC_EXTRUDER_MOTION EXTRUDER=&lt;name&gt; MOTION_QUEUE=&lt;name&gt;</code>: This
 command will cause the stepper specified by EXTRUDER (as defined in an
-<a href="Config_Reference#extruder">extruder</a> or
-<a href="Config_Reference#extruder_stepper">extruder_stepper</a> config section)
+<a href="Config_Reference.html#extruder">extruder</a> or
+<a href="Config_Reference.html#extruder_stepper">extruder_stepper</a> config section)
 to become synchronized to the movement of an extruder specified by
-MOTION_QUEUE (as defined in an <a href="Config_Reference#extruder">extruder</a>
+MOTION_QUEUE (as defined in an <a href="Config_Reference.html#extruder">extruder</a>
 config section). If MOTION_QUEUE is an empty string then the stepper
 will be desynchronized from all extruder movement.</p>
 <h4 id="set_extruder_step_distance">SET_EXTRUDER_STEP_DISTANCE<a class="headerlink" href="#set_extruder_step_distance" title="Permanent link">&para;</a></h4>
@@ -4433,7 +4487,7 @@ retraction and displays them on the terminal.</p>
 <h3 id="force_move">[force_move]<a class="headerlink" href="#force_move" title="Permanent link">&para;</a></h3>
 <p>The force_move module is automatically loaded, however some commands
 require setting <code>enable_force_move</code> in the
-<a href="Config_Reference#force_move">printer config</a>.</p>
+<a href="Config_Reference.html#force_move">printer config</a>.</p>
 <h4 id="stepper_buzz">STEPPER_BUZZ<a class="headerlink" href="#stepper_buzz" title="Permanent link">&para;</a></h4>
 <p><code>STEPPER_BUZZ STEPPER=&lt;config_name&gt;</code>: Move the given stepper forward
 one mm and then backward one mm, repeated 10 times. This is a
@@ -4782,7 +4836,7 @@ babystepping), and subtract if from the probe's z_offset.  This acts
 to take a frequently used babystepping value, and "make it permanent".
 Requires a <code>SAVE_CONFIG</code> to take effect.</p>
 <h3 id="query_adc">[query_adc]<a class="headerlink" href="#query_adc" title="Permanent link">&para;</a></h3>
-<p>The query_endstops module is automatically loaded.</p>
+<p>The query_adc module is automatically loaded.</p>
 <h4 id="query_adc_1">QUERY_ADC<a class="headerlink" href="#query_adc_1" title="Permanent link">&para;</a></h4>
 <p><code>QUERY_ADC [NAME=&lt;config_name&gt;] [PULLUP=&lt;value&gt;]</code>: Report the last
 analog value received for a configured analog pin. If NAME is not
@@ -4811,23 +4865,28 @@ all enabled accelerometer chips.</p>
 <h4 id="test_resonances">TEST_RESONANCES<a class="headerlink" href="#test_resonances" title="Permanent link">&para;</a></h4>
 <p><code>TEST_RESONANCES AXIS=&lt;axis&gt; OUTPUT=&lt;resonances,raw_data&gt;
 [NAME=&lt;name&gt;] [FREQ_START=&lt;min_freq&gt;] [FREQ_END=&lt;max_freq&gt;]
-[HZ_PER_SEC=&lt;hz_per_sec&gt;] [INPUT_SHAPING=[&lt;0:1&gt;]]</code>: Runs the resonance
+[HZ_PER_SEC=&lt;hz_per_sec&gt;] [CHIPS=&lt;adxl345_chip_name&gt;]
+[POINT=x,y,z] [INPUT_SHAPING=[&lt;0:1&gt;]]</code>: Runs the resonance
 test in all configured probe points for the requested "axis" and
 measures the acceleration using the accelerometer chips configured for
 the respective axis. "axis" can either be X or Y, or specify an
 arbitrary direction as <code>AXIS=dx,dy</code>, where dx and dy are floating
 point numbers defining a direction vector (e.g. <code>AXIS=X</code>, <code>AXIS=Y</code>, or
 <code>AXIS=1,-1</code> to define a diagonal direction). Note that <code>AXIS=dx,dy</code>
-and <code>AXIS=-dx,-dy</code> is equivalent. If <code>INPUT_SHAPING=0</code> or not set
-(default), disables input shaping for the resonance testing, because
+and <code>AXIS=-dx,-dy</code> is equivalent. <code>adxl345_chip_name</code> can be one or
+more configured adxl345 chip,delimited with comma, for example
+<code>CHIPS="adxl345, adxl345 rpi"</code>. Note that <code>adxl345</code> can be omitted from
+named adxl345 chips. If POINT is specified it will override the point(s)
+configured in <code>[resonance_tester]</code>. If <code>INPUT_SHAPING=0</code> or not set(default),
+disables input shaping for the resonance testing, because
 it is not valid to run the resonance testing with the input shaper
 enabled. <code>OUTPUT</code> parameter is a comma-separated list of which outputs
 will be written. If <code>raw_data</code> is requested, then the raw
 accelerometer data is written into a file or a series of files
-<code>/tmp/raw_data_&lt;axis&gt;_[&lt;point&gt;_]&lt;name&gt;.csv</code> with (<code>&lt;point&gt;_</code> part of
-the name generated only if more than 1 probe point is configured).  If
-<code>resonances</code> is specified, the frequency response is calculated
-(across all probe points) and written into
+<code>/tmp/raw_data_&lt;axis&gt;_[&lt;chip_name&gt;_][&lt;point&gt;_]&lt;name&gt;.csv</code> with
+(<code>&lt;point&gt;_</code> part of the name generated only if more than 1 probe point
+is configured or POINT is specified). If <code>resonances</code> is specified, the
+frequency response is calculated (across all probe points) and written into
 <code>/tmp/resonances_&lt;axis&gt;_&lt;name&gt;.csv</code> file. If unset, OUTPUT defaults to
 <code>resonances</code>, and NAME defaults to the current time in
 "YYYYMMDD_HHMMSS" format.</p>
@@ -4887,7 +4946,7 @@ literal.</p>
 is enabled (also see the
 <a href="Manual_Level.html#adjusting-bed-leveling-screws-using-the-bed-probe">manual level guide</a>).</p>
 <h4 id="screws_tilt_calculate">SCREWS_TILT_CALCULATE<a class="headerlink" href="#screws_tilt_calculate" title="Permanent link">&para;</a></h4>
-<p><code>SCREWS_TILT_CALCULATE [DIRECTION=CW|CCW]
+<p><code>SCREWS_TILT_CALCULATE [DIRECTION=CW|CCW] [MAX_DEVIATION=&lt;value&gt;]
 [&lt;probe_parameter&gt;=&lt;value&gt;]</code>: This command will invoke the bed screws
 adjustment tool. It will command the nozzle to different locations (as
 defined in the config file) probing the z height and calculate the
@@ -4895,7 +4954,9 @@ number of knob turns to adjust the bed level. If DIRECTION is
 specified, the knob turns will all be in the same direction, clockwise
 (CW) or counterclockwise (CCW). See the PROBE command for details on
 the optional probe parameters. IMPORTANT: You MUST always do a G28
-before using this command.</p>
+before using this command. If MAX_DEVIATION is specified, the command
+will raise a gcode error if any difference in the screw height
+relative to the base screw height is greater than the value provided.</p>
 <h3 id="sdcard_loop">[sdcard_loop]<a class="headerlink" href="#sdcard_loop" title="Permanent link">&para;</a></h3>
 <p>When the <a href="Config_Reference.html#sdcard_loop">sdcard_loop config section</a>
 is enabled, the following extended commands are available.</p>
@@ -4946,6 +5007,31 @@ state to a profile matching the supplied name. Remove will delete the
 profile matching the supplied name from persistent memory. Note that
 after SAVE or REMOVE operations have been run the SAVE_CONFIG gcode
 must be run to make the changes to persistent memory permanent.</p>
+<h3 id="smart_effector">[smart_effector]<a class="headerlink" href="#smart_effector" title="Permanent link">&para;</a></h3>
+<p>Several commands are available when a
+<a href="Config_Reference.html#smart_effector">smart_effector config section</a> is enabled.
+Be sure to check the official documentation for the Smart Effector on the
+<a href="https://duet3d.dozuki.com/Wiki/Smart_effector_and_carriage_adapters_for_delta_printer">Duet3D Wiki</a>
+before changing the Smart Effector parameters. Also check the
+<a href="Probe_Calibrate.html">probe calibration guide</a>.</p>
+<h4 id="set_smart_effector">SET_SMART_EFFECTOR<a class="headerlink" href="#set_smart_effector" title="Permanent link">&para;</a></h4>
+<p><code>SET_SMART_EFFECTOR [SENSITIVITY=&lt;sensitivity&gt;] [ACCEL=&lt;accel&gt;]
+[RECOVERY_TIME=&lt;time&gt;]</code>: Set the Smart Effector parameters. When
+<code>SENSITIVITY</code> is specified, the respective value is written to the
+SmartEffector EEPROM (requires <code>control_pin</code> to be provided).
+Acceptable <code>&lt;sensitivity&gt;</code> values are 0..255, the default is 50. Lower
+values require less nozzle contact force to trigger (but there is a
+higher risk of false triggering due to vibrations during probing), and
+higher values reduce false triggering (but require larger contact
+force to trigger). Since the sensitivity is written to EEPROM, it is
+preserved after the shutdown, and so it does not need to be configured
+on every printer startup. <code>ACCEL</code> and <code>RECOVERY_TIME</code> allow to
+override the corresponding parameters at run-time, see the
+<a href="Config_Reference.html#smart_effector">config section</a> of Smart Effector
+for more info on those parameters.</p>
+<h4 id="reset_smart_effector">RESET_SMART_EFFECTOR<a class="headerlink" href="#reset_smart_effector" title="Permanent link">&para;</a></h4>
+<p><code>RESET_SMART_EFFECTOR</code>: Resets Smart Effector sensitivity to its factory
+settings. Requires <code>control_pin</code> to be provided in the config section.</p>
 <h3 id="stepper_enable">[stepper_enable]<a class="headerlink" href="#stepper_enable" title="Permanent link">&para;</a></h3>
 <p>The stepper_enable module is automatically loaded.</p>
 <h4 id="set_stepper_enable">SET_STEPPER_ENABLE<a class="headerlink" href="#set_stepper_enable" title="Permanent link">&para;</a></h4>
