@@ -179,43 +179,52 @@ class ControlPID:
         self.Kp = config.getfloat('pid_Kp') / PID_PARAM_BASE
         self.Ki = config.getfloat('pid_Ki') / PID_PARAM_BASE
         self.Kd = config.getfloat('pid_Kd') / PID_PARAM_BASE
-        self.min_deriv_time = heater.get_smooth_time()
-        self.temp_integ_max = 0.
-        if self.Ki:
-            self.temp_integ_max = self.heater_max_power / self.Ki
+        self.dt = heater.pwm_delay
+        self.smooth = 1. + heater.get_smooth_time() / self.dt
         self.prev_temp = AMBIENT_TEMP
-        self.prev_temp_time = 0.
-        self.prev_temp_deriv = 0.
-        self.prev_temp_integ = 0.
+        self.prev_err = 0.
+        self.prev_der = 0.
+        self.int_sum = 0.
+
     def temperature_update(self, read_time, temp, target_temp):
-        time_diff = read_time - self.prev_temp_time
-        # Calculate change of temperature
-        temp_diff = temp - self.prev_temp
-        if time_diff >= self.min_deriv_time:
-            temp_deriv = temp_diff / time_diff
-        else:
-            temp_deriv = (self.prev_temp_deriv * (self.min_deriv_time-time_diff)
-                          + temp_diff) / self.min_deriv_time
-        # Calculate accumulated temperature "error"
-        temp_err = target_temp - temp
-        temp_integ = self.prev_temp_integ + temp_err * time_diff
-        temp_integ = max(0., min(self.temp_integ_max, temp_integ))
-        # Calculate output
-        co = self.Kp*temp_err + self.Ki*temp_integ - self.Kd*temp_deriv
-        #logging.debug("pid: %f@%.3f -> diff=%f deriv=%f err=%f integ=%f co=%d",
-        #    temp, read_time, temp_diff, temp_deriv, temp_err, temp_integ, co)
-        bounded_co = max(0., min(self.heater_max_power, co))
-        self.heater.set_pwm(read_time, bounded_co)
-        # Store state for next measurement
+        # calculate the error 
+        err = target_temp - temp
+        # calculate the current integral amount using the Trapezoidal rule
+        ic =  ((self.prev_err + err) / 2.) * self.dt
+        i = self.int_sum + ic
+        # calculate the current derivative using a modified moving average, 
+        # and derivative on measurement, to account for derivative kick 
+        # when the set point changes  
+        dc = -(temp - self.prev_temp) / self.dt
+        dc = ((self.smooth - 1.) * self.prev_der + dc)/self.smooth  
+        # calculate the output 
+        o = self.Kp * err + self.Ki * i + self.Kd * dc
+        # calculate the saturated output
+        so = max(0., min(self.heater_max_power, o))
+
+        # update the heater
+        self.heater.set_pwm(read_time, so)
+        #update the previous values
         self.prev_temp = temp
-        self.prev_temp_time = read_time
-        self.prev_temp_deriv = temp_deriv
-        if co == bounded_co:
-            self.prev_temp_integ = temp_integ
+        self.prev_der = dc
+        if target_temp > 0.:
+            self.prev_err = err
+            if o == so:
+                # not saturated so an update is allowed
+                self.int_sum = i
+            else:
+                # saturated, so conditionally integrate
+                if (o>0.)-(o<0.) != (ic>0.)-(ic<0.):
+                    # the signs are opposite so an update is allowed
+                    self.int_sum = i
+        else:
+            self.prev_err = 0.
+            self.int_sum = 0.
+
     def check_busy(self, eventtime, smoothed_temp, target_temp):
         temp_diff = target_temp - smoothed_temp
         return (abs(temp_diff) > PID_SETTLE_DELTA
-                or abs(self.prev_temp_deriv) > PID_SETTLE_SLOPE)
+                or abs(self.prev_der) > PID_SETTLE_SLOPE)
 
 
 ######################################################################
