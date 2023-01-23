@@ -176,7 +176,7 @@ class DisplayBase:
                 # Convert to big endian format if needed.
                 if sys.byteorder == 'little':
                     data565[:] = (data565[:] >> 8) + ((data565[:] & 0xff) << 8)
-                out = list(map(ord, data565.tobytes()))
+                out = list(data565.tobytes())
 
                 # Set the write window, then send the actual data.
                 self.cmd_raset(row, row + strip_height - 1)
