@@ -176,7 +176,7 @@ class DisplayBase:
                 # Convert to big endian format if needed.
                 if sys.byteorder == 'little':
                     data565[:] = (data565[:] >> 8) + ((data565[:] & 0xff) << 8)
-                out = map(ord, data565.tobytes())
+                out = list(map(ord, data565.tobytes()))
 
                 # Set the write window, then send the actual data.
                 self.cmd_raset(row, row + strip_height - 1)
@@ -225,7 +225,7 @@ class DisplayBase:
         if x + len(data) > width:
             data = data[:width - min(x, width)]
         for i, char in enumerate(data):
-            self.vram.paste(self.font[char], self.ui_c_r_to_x_y(x + i, y))
+            self.vram.paste(self.font[ord(char)], self.ui_c_r_to_x_y(x + i, y))
         self._invalidate(
             self.ui_c_r_to_x_y(x, y),
             (len(data) * ST7789V_FONT_WIDTH, ST7789V_FONT_HEIGHT))
@@ -324,8 +324,9 @@ class ST7789V(DisplayBase):
             self.spi.spi_send(data, reqclock=BACKGROUND_PRIORITY_CLOCK)
         self.set_cs(old_cs)
     def write_data(self, data):
-        if data is None or len(list(data)) == 0:
+        if data is None or len(data) == 0:
             return
+
         old_cs = self.cs_pin_state
         self.set_cs(0)
         self.set_rs(1)
@@ -333,7 +334,7 @@ class ST7789V(DisplayBase):
         # a 3 byte command prefix, a 3 byte header, and a 2 byte trailer.
         # 56 + 3 + 3 + 2 = 64 bytes. The MCU's USB code accepts only up to 64.
         max_length = 56
-        while len(list(data)) > 0:
+        while len(data) > 0:
             datapart = data[:max_length]
             self.spi.spi_send(datapart, reqclock=BACKGROUND_PRIORITY_CLOCK)
             data = data[max_length:]
