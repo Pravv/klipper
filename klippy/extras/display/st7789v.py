@@ -187,6 +187,10 @@ class DisplayBase:
 
                 # Update our image of the remote VRAM to reflect what we
                 # transmitted.
+                test_1 = (start_x + first_col)
+                test_2 = row
+                print(type(test_1))
+                print(type(test_2))
                 self.remote_vram.paste(strip, (int(start_x + first_col), int(row)))
 
                 if i < len(cols):
@@ -340,8 +344,6 @@ class ST7789V(DisplayBase):
             data = data[max_length:]
         self.set_cs(old_cs)
     def cmd_caset(self, x, cx):
-        print(type(x))
-        print(type(cx))
         self.cmd(ST7789V_CMD_CASET, [int(x) >> int(8), int(x) & 0xff, int(cx) >> int(8), int(cx) & 0xff])
     def cmd_raset(self, y, cy):
         self.cmd(ST7789V_CMD_RASET, [int(y) >> 8, int(y) & 0xff, int(cy) >> 8, int(cy) & 0xff])
