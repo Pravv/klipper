@@ -93,8 +93,8 @@ class DisplayBase:
     def offset_to_x_y(self, offset):
         return offset % ST7789V_COLS, offset // ST7789V_COLS
     def ui_c_r_to_x_y(self, c, r):
-        return (self.ui_top_left[0] + c * ST7789V_FONT_WIDTH,
-                self.ui_top_left[1] + r * ST7789V_FONT_HEIGHT)
+        return (int(self.ui_top_left[0] + c * ST7789V_FONT_WIDTH),
+                int(self.ui_top_left[1] + r * ST7789V_FONT_HEIGHT))
     def _rowmajor_bitmap_to_image(self, b, width=8):
         return Image.frombytes('1', (int(width), int(len(b) / (width / 8))), b)
     def rgb_to_565(self, rgb):
