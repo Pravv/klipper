@@ -187,7 +187,7 @@ class DisplayBase:
 
                 # Update our image of the remote VRAM to reflect what we
                 # transmitted.
-                self.remote_vram.paste(strip, (start_x + first_col, row))
+                self.remote_vram.paste(strip, (int(start_x + first_col), int(row)))
 
                 if i < len(cols):
                     first_col = last_col = int(cols[i])
