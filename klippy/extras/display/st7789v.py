@@ -150,7 +150,7 @@ class DisplayBase:
             # to avoid unnecessary RASET/CASET instructions, but skipping
             # large gaps that have not changed.
             max_gap_to_join = 4
-            first_col = last_col = cols[0]
+            first_col = last_col = int(cols[0])
             i = 1
             while i == 1 or i <= len(cols):
                 if i < len(cols) and cols[i] - last_col <= max_gap_to_join:
@@ -190,7 +190,7 @@ class DisplayBase:
                 self.remote_vram.paste(strip, (start_x + first_col, row))
 
                 if i < len(cols):
-                    first_col = last_col = cols[i]
+                    first_col = last_col = int(cols[i])
                 i += 1
 
             # Take a break at least every 50ms or 16KB transmitted to
