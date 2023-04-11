@@ -392,8 +392,8 @@ class ADS1X1X:
             self.reset_all_devices)
 
     def handle_connect(self):
-       logging.info('handle_connect')
-       logging.info(ADS1X1X.sample_timer)
+        logging.info('handle_connect')
+        logging.info(ADS1X1X.sample_timer)
         # Only once
         if(ADS1X1X.sample_timer is None):
             # Init all devices on bus for this kind of device
