@@ -161,6 +161,8 @@ class MCU_I2C:
     def get_command_queue(self):
         return self.cmd_queue
     def build_config(self):
+        logging.info('building_config')
+        logging.info(self.oid)
         bus = resolve_bus_name(self.mcu, "i2c_bus", self.bus)
         self.mcu.add_config_cmd(self.config_fmt % (bus,))
         self.i2c_write_cmd = self.mcu.lookup_command(
