@@ -187,7 +187,8 @@ class ADS1X1X:
 
     @classmethod
     def _sample_ads1x1(cls, eventtime):
-        logging.info(cls.current_operation)
+        logging.info(eventtime)
+        logging.info(cls)
         # Initialize
         measured_time = None
         if(cls.current_sensor is None):
