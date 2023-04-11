@@ -257,6 +257,7 @@ class ADS1X1X:
         # read a single register
         params = ADS1X1X.i2c[chip_addr].i2c_read([reg], read_len)
         buff = bytearray(params['response'])
+        logging.info(buff)
         return (buff[0]<<8 | buff[1])
 
     @classmethod
@@ -458,10 +459,6 @@ class ADS1X1X:
     def get_status(self, eventtime):
         logging.info('get_status')
         logging.info(self.temp)
-        z= self.read_register( \
-            self.chip_addr \
-            ,ADS1X1X_REG_POINTER['CONVERSION'], 2)
-        logging.info(z)
         return {
             'temperature': round(self.temp, 2),
         }
