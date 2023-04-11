@@ -187,11 +187,13 @@ class ADS1X1X:
 
     @classmethod
     def _sample_ads1x1(cls, eventtime):
+        logging.info('_sample_ads1x1')
         logging.info(eventtime)
         logging.info(cls)
         # Initialize
         measured_time = None
         if(cls.current_sensor is None):
+            logging.info(cls.sensor_instances.last)
             cls.current_sensor = cls.sensor_instances.last
         if(cls.current_operation is None):
             cls.current_operation = ADS1X1_OPERATIONS['SET_MUX']
