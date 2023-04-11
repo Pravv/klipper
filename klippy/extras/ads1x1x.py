@@ -178,7 +178,8 @@ I2C_SPEED = 400E3
 class ADS1X1X:
     # Class variables
     reactor = None
-    i2c = {} # {self.chip_addr: bus.MCU_I2C_from_config(), ... up to 4 devices}
+
+    i2c = {0x48: bus.MCU_I2C_from_config(config, 0x48, I2C_SPEED)}
     sensor_instances = CircularLinkedList()
     sample_timer = None
     report_time = None
@@ -313,7 +314,7 @@ class ADS1X1X:
             , minval=ADS1X1X_COMPARATOR_QUEUE['QUEUE_1']
             , maxval=ADS1X1X_COMPARATOR_QUEUE['QUEUE_NONE'])
         if( self.chip_addr not in ADS1X1X.i2c):
-            logging.info('Adding chip to i2c')
+            logging.info('-----------------------------------------------------Adding chip to i2c')
             ADS1X1X.i2c[self.chip_addr] = bus.MCU_I2C_from_config(config
                 , self.chip_addr, I2C_SPEED)
         else:
