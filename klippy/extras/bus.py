@@ -4,6 +4,7 @@
 #
 # This file may be distributed under the terms of the GNU GPLv3 license.
 import mcu
+import logging
 
 def resolve_bus_name(mcu, param, bus):
     # Find enumerations for the given bus
