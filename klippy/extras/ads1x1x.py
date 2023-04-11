@@ -426,10 +426,10 @@ class ADS1X1X:
         temp = self.converter.calcTemp( (volts - self.voltage_offset) \
             / self.adc_voltage )
         # Debugging statement
-        #logging.info(\
-        #    "ADS1x1 (%02x,%02x): Read %#x Volts %.3f Scale %.4f Temp %.3f"
-        #    % (self.chip_addr, self.mux, result, volts - self.voltage_offset
-        #        , (volts - self.voltage_offset) / self.adc_voltage, temp) )
+        logging.info(\
+           "ADS1x1 (%02x,%02x): Read %#x Volts %.3f Scale %.4f Temp %.3f"
+           % (self.chip_addr, self.mux, result, volts - self.voltage_offset
+               , (volts - self.voltage_offset) / self.adc_voltage, temp) )
         # Check if result is within limits
         if temp < self.min_temp or temp > self.max_temp:
             self.printer.invoke_shutdown(
