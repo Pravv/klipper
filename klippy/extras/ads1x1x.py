@@ -364,20 +364,20 @@ class ADS1X1X:
 
         # Set up 2-byte configuration that will be used with each request
         self.config = 0
-        self.config |= (ADS1X1X_OS['OS_SINGLE'] \
-            & ADS1X1X_REG_CONFIG['OS_MASK'])
-        self.config |= (self.mux & ADS1X1X_REG_CONFIG['MULTIPLEXER_MASK'])
-        self.config |= (self.pga & ADS1X1X_REG_CONFIG['PGA_MASK'])
-        self.config |= (self.mode & ADS1X1X_REG_CONFIG['MODE_MASK'])
-        self.config |= (self.speed & ADS1X1X_REG_CONFIG['DATA_RATE_MASK'])
-        self.config |= (self.comp_mode \
-            & ADS1X1X_REG_CONFIG['COMPARATOR_MODE_MASK'])
-        self.config |= (self.comp_polarity \
-            & ADS1X1X_REG_CONFIG['COMPARATOR_POLARITY_MASK'])
-        self.config |= (self.comp_latching \
-            & ADS1X1X_REG_CONFIG['COMPARATOR_LATCHING_MASK'])
-        self.config |= (self.comp_queue \
-            & ADS1X1X_REG_CONFIG['COMPARATOR_QUEUE_MASK'])
+#         self.config |= (ADS1X1X_OS['OS_SINGLE'] \
+#             & ADS1X1X_REG_CONFIG['OS_MASK'])
+#         self.config |= (self.mux & ADS1X1X_REG_CONFIG['MULTIPLEXER_MASK'])
+#         self.config |= (self.pga & ADS1X1X_REG_CONFIG['PGA_MASK'])
+#         self.config |= (self.mode & ADS1X1X_REG_CONFIG['MODE_MASK'])
+#         self.config |= (self.speed & ADS1X1X_REG_CONFIG['DATA_RATE_MASK'])
+#         self.config |= (self.comp_mode \
+#             & ADS1X1X_REG_CONFIG['COMPARATOR_MODE_MASK'])
+#         self.config |= (self.comp_polarity \
+#             & ADS1X1X_REG_CONFIG['COMPARATOR_POLARITY_MASK'])
+#         self.config |= (self.comp_latching \
+#             & ADS1X1X_REG_CONFIG['COMPARATOR_LATCHING_MASK'])
+#         self.config |= (self.comp_queue \
+#             & ADS1X1X_REG_CONFIG['COMPARATOR_QUEUE_MASK'])
 
         logging.info("ADS1x1: Chip Type %#x Chip Addr %#x Pin ID %#x for %s" \
             % (self.chip, self.chip_addr, self.mux, self.name))
@@ -392,6 +392,8 @@ class ADS1X1X:
             self.reset_all_devices)
 
     def handle_connect(self):
+       logging.info('handle_connect')
+       logging.info(ADS1X1X.sample_timer)
         # Only once
         if(ADS1X1X.sample_timer is None):
             # Init all devices on bus for this kind of device
@@ -417,6 +419,7 @@ class ADS1X1X:
         return self.report_time
 
     def degrees_from_sample(self, result):
+        logging.info('degrees_from_sample')
         # The sample is encoded in the top 12 or full 16 bits
         # Value's meaning is defined by ADS1X1X_REG_CONFIG['PGA_MASK']
         if self.chip == ADS1X1X_CHIP_TYPE['ADS1013'] \
@@ -442,11 +445,15 @@ class ADS1X1X:
         return temp
 
     def get_status(self, eventtime):
+        logging.info('get_status')
+        logging.info(self.temp)
+
         return {
             'temperature': round(self.temp, 2),
         }
 
 def load_config(config):
+    logging.info('load_config')
     # Register sensor
     pheaters = config.get_printer().load_object(config, "heaters")
     pheaters.add_sensor_factory("ADS1X1X", ADS1X1X)
