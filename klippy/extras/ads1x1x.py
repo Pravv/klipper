@@ -187,9 +187,11 @@ class ADS1X1X:
 
     @classmethod
     def _sample_ads1x1(cls, eventtime):
-        logging.info('_sample_ads1x1')
+        logging.info("_sample_ads1x1: Chip Type %#x Chip Addr %#x Pin ID %#x for %s" \
+                    % (self.chip, self.chip_addr, self.mux, self.name))
+
         logging.info(eventtime)
-        logging.info(cls)
+        logging.info(cls.current_sensor.data.chip_addr)
         # Initialize
         measured_time = None
         if(cls.current_sensor is None):
@@ -203,9 +205,7 @@ class ADS1X1X:
             if(cls.current_operation == ADS1X1_OPERATIONS['SET_MUX']):
                 # Set channel on current sensor, initiate conversion
                 try:
-                    cls.write_register(cls.current_sensor.data.chip_addr\
-                        ,ADS1X1X_REG_POINTER['CONFIG']\
-                        ,cls.current_sensor.data.config)
+                    cls.write_register(cls.current_sensor.data.chip_addr, ADS1X1X_REG_POINTER['CONFIG'],cls.current_sensor.data.config)
                 except Exception:
                     logging.exception("ads1x1x: Error triggering mux")
                     cls.current_sensor.data.temp = 0.0
@@ -366,20 +366,20 @@ class ADS1X1X:
 
         # Set up 2-byte configuration that will be used with each request
         self.config = 0
-#         self.config |= (ADS1X1X_OS['OS_SINGLE'] \
-#             & ADS1X1X_REG_CONFIG['OS_MASK'])
-#         self.config |= (self.mux & ADS1X1X_REG_CONFIG['MULTIPLEXER_MASK'])
-#         self.config |= (self.pga & ADS1X1X_REG_CONFIG['PGA_MASK'])
-#         self.config |= (self.mode & ADS1X1X_REG_CONFIG['MODE_MASK'])
-#         self.config |= (self.speed & ADS1X1X_REG_CONFIG['DATA_RATE_MASK'])
-#         self.config |= (self.comp_mode \
-#             & ADS1X1X_REG_CONFIG['COMPARATOR_MODE_MASK'])
-#         self.config |= (self.comp_polarity \
-#             & ADS1X1X_REG_CONFIG['COMPARATOR_POLARITY_MASK'])
-#         self.config |= (self.comp_latching \
-#             & ADS1X1X_REG_CONFIG['COMPARATOR_LATCHING_MASK'])
-#         self.config |= (self.comp_queue \
-#             & ADS1X1X_REG_CONFIG['COMPARATOR_QUEUE_MASK'])
+        self.config |= (ADS1X1X_OS['OS_SINGLE'] \
+            & ADS1X1X_REG_CONFIG['OS_MASK'])
+        self.config |= (self.mux & ADS1X1X_REG_CONFIG['MULTIPLEXER_MASK'])
+        self.config |= (self.pga & ADS1X1X_REG_CONFIG['PGA_MASK'])
+        self.config |= (self.mode & ADS1X1X_REG_CONFIG['MODE_MASK'])
+        self.config |= (self.speed & ADS1X1X_REG_CONFIG['DATA_RATE_MASK'])
+        self.config |= (self.comp_mode \
+            & ADS1X1X_REG_CONFIG['COMPARATOR_MODE_MASK'])
+        self.config |= (self.comp_polarity \
+            & ADS1X1X_REG_CONFIG['COMPARATOR_POLARITY_MASK'])
+        self.config |= (self.comp_latching \
+            & ADS1X1X_REG_CONFIG['COMPARATOR_LATCHING_MASK'])
+        self.config |= (self.comp_queue \
+            & ADS1X1X_REG_CONFIG['COMPARATOR_QUEUE_MASK'])
 
         logging.info("ADS1x1: Chip Type %#x Chip Addr %#x Pin ID %#x for %s" \
             % (self.chip, self.chip_addr, self.mux, self.name))
