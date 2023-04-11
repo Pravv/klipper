@@ -262,7 +262,7 @@ class ADS1X1X:
         self.name = config.get_name().split()[-1]
         self.chip = config.getint('ads1x1_chip'
             , minval=ADS1X1X_CHIP_TYPE['ADS1013']
-            , maxval=ADS1X1X_CHIP_TYPE['ADS1015'])
+            , maxval=ADS1X1X_CHIP_TYPE['ADS1115'])
         self.chip_addr = config.getint('ads1x1_addr'
             , ADS1X1X_CHIP_ADDR['GND']
             , minval=ADS1X1X_CHIP_ADDR['GND']
