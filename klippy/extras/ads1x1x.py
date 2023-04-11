@@ -314,16 +314,16 @@ class ADS1X1X:
             , ADS1X1X_COMPARATOR_QUEUE['QUEUE_NONE']
             , minval=ADS1X1X_COMPARATOR_QUEUE['QUEUE_1']
             , maxval=ADS1X1X_COMPARATOR_QUEUE['QUEUE_NONE'])
-        if( self.chip_addr not in ADS1X1X.i2c):
-            logging.info('-----------------------------------------------------Adding chip to i2c')
-            ADS1X1X.i2c[self.chip_addr] = bus.MCU_I2C_from_config(config
-                , self.chip_addr, I2C_SPEED)
-        else:
+#         if( self.chip_addr not in ADS1X1X.i2c):
+#             logging.info('-----------------------------------------------------Adding chip to i2c')
+#             ADS1X1X.i2c[self.chip_addr] = bus.MCU_I2C_from_config(config
+#                 , self.chip_addr, I2C_SPEED)
+#         else:
             # Dummy read of parameters to avoid config error
-            config.get('i2c_mcu', 'mcu')
-            config.getint('i2c_speed', 100000)
-            config.get('i2c_bus', None)
-            config.getint('i2c_address', 0)
+         config.get('i2c_mcu', 'mcu')
+         config.getint('i2c_speed', 100000)
+         config.get('i2c_bus', None)
+         config.getint('i2c_address', 0)
 
         # Configure probe on sensor to use
         self.adc_voltage = config.getfloat('adc_voltage', 5., above=0.)
