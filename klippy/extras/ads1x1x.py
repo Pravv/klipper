@@ -179,8 +179,6 @@ I2C_SPEED = 100000
 class ADS1X1X:
     # Class variables
     reactor = None
-
-    i2c = {0x48: bus.MCU_I2C_from_config(config, 0x48, I2C_SPEED)}
     sensor_instances = CircularLinkedList()
     sample_timer = None
     report_time = None
@@ -273,6 +271,8 @@ class ADS1X1X:
 
     def __init__(self, config):
         self.i2c_broadcast = bus.MCU_I2C_from_config(config, 0x00, I2C_SPEED)
+        self.i2c = {0x48: bus.MCU_I2C_from_config(config, 0x48, I2C_SPEED)}
+
         self.printer = config.get_printer()
         self.name = config.get_name().split()[-1]
         self.chip = config.getint('ads1x1_chip'
