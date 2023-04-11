@@ -458,7 +458,10 @@ class ADS1X1X:
     def get_status(self, eventtime):
         logging.info('get_status')
         logging.info(self.temp)
-
+        z= cls.read_register( \
+            cls.current_sensor.data.chip_addr \
+            ,ADS1X1X_REG_POINTER['CONVERSION'], 2)
+        logging.info(z)
         return {
             'temperature': round(self.temp, 2),
         }
