@@ -406,6 +406,7 @@ class ADS1X1X:
     def handle_connect(self):
         logging.info('handle_connect')
         logging.info(ADS1X1X.sample_timer)
+        ADS1X1X.sample_timer = None
         # Only once
         if(ADS1X1X.sample_timer is None):
             # Init all devices on bus for this kind of device
