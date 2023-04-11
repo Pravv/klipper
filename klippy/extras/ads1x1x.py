@@ -174,7 +174,8 @@ ADS1X1X_REPORT_TIME = 800E-3
 # very fast but each port shares the same conversion
 # register.  Select port, call for conversion, get result.
 ADS1X1X_MIN_REPORT_TIME = 4E-3
-I2C_SPEED = 400E3
+#I2C_SPEED = 400E3
+I2C_SPEED = 100000
 class ADS1X1X:
     # Class variables
     reactor = None
