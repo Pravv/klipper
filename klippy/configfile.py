@@ -306,6 +306,7 @@ class PrinterConfig:
         # Setup get_status()
         self._build_status(config)
     def log_config(self, config):
+        return ''
         lines = ["===== Config file =====",
                  self._build_config_string(config),
                  "======================="]
