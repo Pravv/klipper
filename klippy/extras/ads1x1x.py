@@ -188,7 +188,7 @@ class ADS1X1X:
     @classmethod
     def _sample_ads1x1(cls, eventtime):
         logging.info("_sample_ads1x1: Chip Type %#x Chip Addr %#x Pin ID %#x for %s" \
-                    % (self.chip, self.chip_addr, self.mux, self.name))
+                    % (cls.current_sensor.data.chip, cls.current_sensor.data.chip_addr, cls.current_sensor.data.mux, cls.current_sensor.data.name))
 
         logging.info(eventtime)
         logging.info(cls.current_sensor.data.chip_addr)
