@@ -246,6 +246,13 @@ class ADS1X1X:
         return measured_time + cls.report_time / len(ADS1X1_OPERATIONS)
 
     @classmethod
+    def read_register2(self, reg_name, read_len):
+        # read a single register
+        regs = [self.chip_registers[reg_name]]
+        params = self.i2c.i2c_read(regs, read_len)
+        return bytearray(params['response'])
+
+    @classmethod
     def read_register(cls, chip_addr, reg, read_len):
         # read a single register
         params = ADS1X1X.i2c[chip_addr].i2c_read([reg], read_len)
@@ -305,6 +312,7 @@ class ADS1X1X:
             , minval=ADS1X1X_COMPARATOR_QUEUE['QUEUE_1']
             , maxval=ADS1X1X_COMPARATOR_QUEUE['QUEUE_NONE'])
         if( self.chip_addr not in ADS1X1X.i2c):
+            logging.info('Adding chip to i2c')
             ADS1X1X.i2c[self.chip_addr] = bus.MCU_I2C_from_config(config
                 , self.chip_addr, I2C_SPEED)
         else:
