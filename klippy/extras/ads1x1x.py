@@ -187,11 +187,6 @@ class ADS1X1X:
 
     @classmethod
     def _sample_ads1x1(cls, eventtime):
-        logging.info("_sample_ads1x1: Chip Type %#x Chip Addr %#x Pin ID %#x for %s" \
-                    % (cls.current_sensor.data.chip, cls.current_sensor.data.chip_addr, cls.current_sensor.data.mux, cls.current_sensor.data.name))
-
-        logging.info(eventtime)
-        logging.info(cls.current_sensor.data.chip_addr)
         # Initialize
         measured_time = None
         if(cls.current_sensor is None):
@@ -199,6 +194,12 @@ class ADS1X1X:
             cls.current_sensor = cls.sensor_instances.last
         if(cls.current_operation is None):
             cls.current_operation = ADS1X1_OPERATIONS['SET_MUX']
+
+        logging.info("_sample_ads1x1: Chip Type %#x Chip Addr %#x Pin ID %#x for %s" \
+                            % (cls.current_sensor.data.chip, cls.current_sensor.data.chip_addr, cls.current_sensor.data.mux, cls.current_sensor.data.name))
+
+        logging.info(eventtime)
+        logging.info(cls.current_sensor.data.chip_addr)
         # If sensor is allocated
         if(cls.current_sensor is not None):
             # State machine
