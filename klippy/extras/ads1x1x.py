@@ -187,6 +187,7 @@ class ADS1X1X:
 
     @classmethod
     def _sample_ads1x1(cls, eventtime):
+        logging.info(cls.current_operation)
         # Initialize
         measured_time = None
         if(cls.current_sensor is None):
@@ -376,6 +377,7 @@ class ADS1X1X:
             & ADS1X1X_REG_CONFIG['COMPARATOR_LATCHING_MASK'])
         self.config |= (self.comp_queue \
             & ADS1X1X_REG_CONFIG['COMPARATOR_QUEUE_MASK'])
+
         logging.info("ADS1x1: Chip Type %#x Chip Addr %#x Pin ID %#x for %s" \
             % (self.chip, self.chip_addr, self.mux, self.name))
 
@@ -423,6 +425,7 @@ class ADS1X1X:
             volts = result * ADS1X1X_PGA_SCALAR12[self.pga]
         else:
             volts = result * ADS1X1X_PGA_SCALAR16[self.pga]
+
         temp = self.converter.calcTemp( (volts - self.voltage_offset) \
             / self.adc_voltage )
         # Debugging statement
