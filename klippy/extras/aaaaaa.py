@@ -20,13 +20,19 @@ class ADS1100Error(Exception):
 
 
 class MCU_ADS1100:
-
-    def __init__(self, main):
-        self._printer = main._printer
-        self._reactor = main._printer.get_reactor()
-        self._i2c = main._i2c
-        self._mcu = main._mcu
-        self._gain = main._gain
+    def __init__(self, config):
+        self._printer = config.get_printer()
+        self._name = config.get_name().split()[1]
+        self._i2c = bus.MCU_I2C_from_config(config,
+                                            default_addr=ADS1100_CHIP_ADDR, default_speed=ADS1100_I2C_SPEED)
+        self._mcu = self._i2c.get_mcu()
+        self._gain = config.getint('gain', 1, minval=1)
+        if self._gain not in ADS1100_GAIN_TABLE:
+            raise self._printer.config_error("ADS1100 does not support the "
+                                            "selected gain: %d" % self._gain)
+        # Register setup_pin
+        ppins = self._printer.lookup_object('pins')
+        ppins.register_chip(self._name, self)
 
         self._last_value = 0.
         self._last_time = 0
@@ -46,13 +52,13 @@ class MCU_ADS1100:
         self._last_callback_time = 0
 
 
-        query_adc = main._printer.lookup_object('query_adc')
-        query_adc.register_adc(main._name, self)
+        query_adc = self._printer.lookup_object('query_adc')
+        query_adc.register_adc(self._name, self)
 
         self._mcu.register_config_callback(self._build_config)
-        main._printer.register_event_handler("klippy:ready", self._handle_ready)
+        self._printer.register_event_handler("klippy:ready", self._handle_ready)
 
-        self.register_commands(main._name)
+        self.register_commands(self._name)
 
 
     def get_mcu(self):
@@ -164,31 +170,11 @@ class MCU_ADS1100:
         return eventtime + self._sample_time
 
 
-class PrinterADS1100:
-
-    def __init__(self, config):
-        self._printer = config.get_printer()
-        self._name = config.get_name().split()[1]
-        self._i2c = bus.MCU_I2C_from_config(config,
-                                            default_addr=ADS1100_CHIP_ADDR, default_speed=ADS1100_I2C_SPEED)
-        self._mcu = self._i2c.get_mcu()
-        self._gain = config.getint('gain', 1, minval=1)
-        if self._gain not in ADS1100_GAIN_TABLE:
-            raise self._printer.config_error("ADS1100 does not support the "
-                                            "selected gain: %d" % self._gain)
-        # Register setup_pin
-        ppins = self._printer.lookup_object('pins')
-        ppins.register_chip(self._name, self)
-
-    def setup_pin(self, pin_type, pin_params):
-        #//if pin_type != 'adc':
-        #     raise self._printer.config_error("ADS1100 only supports adc pins")
-        return MCU_ADS1100(self)
 
 
 def load_config_prefix(config):
     logging.info('load_config_prefix')
-    return PrinterADS1100(config)
+    return MCU_ADS1100(config)
 def load_config(config):
     logging.info('load_config')
-    return PrinterADS1100(config)
+    return MCU_ADS1100(config)
