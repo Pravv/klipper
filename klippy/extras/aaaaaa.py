@@ -80,6 +80,44 @@ class SoftwareI2C:
         send([self.scl_oid, 1], minclock=minclock, reqclock=reqclock)
         send([self.sda_oid, 1], minclock=minclock, reqclock=reqclock)
 
+    def i2c_read(self, length, minclock=0, reqclock=0, sda_value=None):
+        # Prepare to receive data
+        self.update_pin_cmd.send([self.sda_oid, 1], minclock=minclock, reqclock=reqclock)
+
+        # Send start condition and address with read bit set
+        self.i2c_write([self.addr | 0x01], minclock=minclock, reqclock=reqclock)
+
+        # Receive bytes
+        recv_data = []
+        send = self.scl_main.update_pin_cmd.send
+        for _ in range(length):
+            # Receive 8 data bits
+            data = 0
+            for i in range(8):
+                send([self.scl_oid, 1], minclock=minclock, reqclock=reqclock)
+                # Read SDA pin value here and store it in the 'sda_value' variable
+                # Use 'sda_value' to update the 'data' variable
+                if sda_value:
+                    data |= (1 << (7 - i))
+                send([self.scl_oid, 0], minclock=minclock, reqclock=reqclock)
+
+            recv_data.append(data)
+
+            # Send ACK/NACK for each byte except the last one
+            if len(recv_data) < length:
+                send([self.sda_oid, 0], minclock=minclock, reqclock=reqclock)
+            send([self.scl_oid, 1], minclock=minclock, reqclock=reqclock)
+            send([self.scl_oid, 0], minclock=minclock, reqclock=reqclock)
+
+        # Release SDA line
+        send([self.sda_oid, 1], minclock=minclock, reqclock=reqclock)
+
+        # Send stop condition
+        send([self.scl_oid, 1], minclock=minclock, reqclock=reqclock)
+        send([self.sda_oid, 1], minclock=minclock, reqclock=reqclock)
+
+        return recv_data
+
 class MCU_ADS1100:
     def __init__(self, config):
         self._printer = config.get_printer()
@@ -124,6 +162,7 @@ class MCU_ADS1100:
 
         self.register_commands(self._name)
         self.setup_minmax(0.03,15)
+        self.setup_adc_callback(0.5, self.adc_callback)
 
 
     def get_mcu(self):
@@ -152,6 +191,11 @@ class MCU_ADS1100:
     def setup_adc_callback(self, report_time, callback):
         self._report_time = report_time
         self._callback = callback
+    def adc_callback(self, read_time, read_value):
+        logging.info('adc_callback')
+        logging.info(read_time)
+        logging.info(read_value)
+
 
     def get_last_value(self):
         return self._last_value, self._last_time
