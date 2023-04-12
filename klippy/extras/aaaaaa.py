@@ -241,6 +241,7 @@ class MCU_ADS1100:
             # read with error handling, spurious errors are possible
             result = self._i2c.i2c_read([], 2)
             response = bytearray(result['response'])
+            logging.info(response)
 
             # retry if response too short
             if len(response) < 2:
@@ -252,6 +253,7 @@ class MCU_ADS1100:
             return (response, result['#receive_time'])
 
     def _handle_timer(self, eventtime):
+        logging.info('_handle_timer')
         (response, receive_time) = self._read_response()
         self._value += struct.unpack('>h', response[0:2])[0]
         self._state += 1
