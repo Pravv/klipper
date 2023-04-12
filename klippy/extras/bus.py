@@ -164,14 +164,19 @@ class MCU_I2C:
     def build_config(self):
         logging.info('building_config')
         logging.info(self.oid)
+        logging.info(self.cmd_queue)
         bus = resolve_bus_name(self.mcu, "i2c_bus", self.bus)
         self.mcu.add_config_cmd(self.config_fmt % (bus,))
         self.i2c_write_cmd = self.mcu.lookup_command(
             "i2c_write oid=%c data=%*s", cq=self.cmd_queue)
-        self.i2c_read_cmd = self.mcu.lookup_query_command(
-            "i2c_read oid=%c reg=%*s read_len=%u",
-            "i2c_read_response oid=%c response=%*s", oid=self.oid,
-            cq=self.cmd_queue)
+
+           read_cmd_queue = self.mcu.lookup_query_command(
+                        "i2c_read oid=%c reg=%*s read_len=%u",
+                        "i2c_read_response oid=%c response=%*s", oid=self.oid,
+                        cq=self.cmd_queue)
+
+        logging.info(read_cmd_queue)
+        self.i2c_read_cmd =read_cmd_queue
         self.i2c_modify_bits_cmd = self.mcu.lookup_command(
             "i2c_modify_bits oid=%c reg=%*s clear_set_bits=%*s",
             cq=self.cmd_queue)
