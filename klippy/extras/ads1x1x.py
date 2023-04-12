@@ -253,16 +253,9 @@ class ADS1X1X:
         return measured_time + cls.report_time / len(ADS1X1_OPERATIONS)
 
     @classmethod
-    def read_register2(self, reg_name, read_len):
-        # read a single register
-        regs = [self.chip_registers[reg_name]]
-        params = self.i2c.i2c_read(regs, read_len)
-        return bytearray(params['response'])
-
-    @classmethod
     def read_register(cls, chip_addr, reg, read_len):
         # read a single register
-        params = cls.current_sensor.data.i2c[chip_addr].i2c_read([reg], read_len)
+        params = cls.current_sensor.data.i2c.i2c_read([reg], read_len)
         buff = bytearray(params['response'])
         logging.info(buff)
         return (buff[0] << 8 | buff[1])
@@ -274,15 +267,15 @@ class ADS1X1X:
             ((data >> 8) & 0xFF),  # High byte
             (data & 0xFF),  # Lo byte
         ]
-        cls.current_sensor.data.i2c[chip_addr].i2c_write(data)
+        cls.current_sensor.data.i2c.i2c_write(data)
 
     def __init__(self, config):
 
         self.printer = config.get_printer()
         self.name = config.get_name().split()[-1]
         #   self.i2c_broadcast = bus.MCU_I2C_from_config(config, 0x00, I2C_SPEED)
-        self.i2c = {0x48: bus.MCU_I2C_from_config(config, 0x48, I2C_SPEED)}
-        #self.i2c = bus.MCU_I2C_from_config(config, default_addr=0x48, default_speed=100000)
+      #  self.i2c = {0x48: bus.MCU_I2C_from_config(config, 0x48, I2C_SPEED)}
+        self.i2c = bus.MCU_I2C_from_config(config, default_addr=0x48, default_speed=100000)
 
         self.chip = config.getint('ads1x1_chip'
                                   , minval=ADS1X1X_CHIP_TYPE['ADS1013']
@@ -370,7 +363,7 @@ class ADS1X1X:
         if (probe_type != config.get('probe_type')):
             logging.error("Probe '%s' not found in adc_temperature for %s" \
                           % (config.get('probe_type'), self.name));
-        self.mcu = self.i2c[self.chip_addr].get_mcu()
+        self.mcu = self.i2c.get_mcu()
         # Initialize and keep the smallest time
         if (ADS1X1X.report_time is None):
             ADS1X1X.report_time = config.getfloat('ads1x1_report_time'
@@ -426,8 +419,7 @@ class ADS1X1X:
             ADS1X1X.reactor.update_timer(self.sample_timer, ADS1X1X.reactor.NOW)
 
     def reset_all_devices(self, print_time=0.):
-        # Init all devices on bus for this kind of device
-        self.i2c_broadcast.i2c_write([0x06, 0x00, 0x00])
+        return 0
 
     def setup_minmax(self, min_temp, max_temp):
         self.min_temp = min_temp
