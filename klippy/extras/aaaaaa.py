@@ -45,11 +45,15 @@ class MCU_ADS1100:
         self._report_time = 0
         self._last_callback_time = 0
 
+
         query_adc = main._printer.lookup_object('query_adc')
         query_adc.register_adc(main._name, self)
 
         self._mcu.register_config_callback(self._build_config)
         main._printer.register_event_handler("klippy:ready", self._handle_ready)
+
+        self.register_commands(main._name)
+
 
     def get_mcu(self):
         return self._mcu
