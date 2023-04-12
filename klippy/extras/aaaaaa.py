@@ -83,9 +83,9 @@ class SoftwareI2C:
 class MCU_ADS1100:
     def __init__(self, config):
         self._printer = config.get_printer()
+        self._i2c = SoftwareI2C(config, ADS1100_CHIP_ADDR)#bus.MCU_I2C_from_config(config, default_addr=ADS1100_CHIP_ADDR, default_speed=ADS1100_I2C_SPEED)
         self._reactor = self._printer.get_reactor()
         self._name = config.get_name().split()[1]
-        self._i2c = SoftwareI2C(config, ADS1100_CHIP_ADDR)#bus.MCU_I2C_from_config(config, default_addr=ADS1100_CHIP_ADDR, default_speed=ADS1100_I2C_SPEED)
         self._mcu = self._i2c.get_mcu()
         self._gain = config.getint('gain', 1, minval=1)
         if self._gain not in ADS1100_GAIN_TABLE:
