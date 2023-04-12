@@ -54,6 +54,17 @@ class MCU_ADS1100:
     def get_mcu(self):
         return self._mcu
 
+    def register_commands(self, name):
+        # Register commands
+        gcode = self.printer.lookup_object('gcode')
+        gcode.register_mux_command("TEST_ADC", "CHIP", name,
+                                   self.cmd_ACCELEROMETER_MEASURE,
+                                   desc=self.cmd_ACCELEROMETER_MEASURE_help)
+    cmd_ACCELEROMETER_MEASURE_help = "Start/stop accelerometer"
+    def cmd_ACCELEROMETER_MEASURE(self, gcmd):
+        gcmd.respond_info("Writing raw accelerometer data to %s file"
+                          % (self.get_last_value()[0],))
+
     def setup_minmax(self, sample_time, sample_count,
                      minval=-1., maxval=1., range_check_count=0):
         self._sample_time = sample_time
