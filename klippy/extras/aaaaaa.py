@@ -189,3 +189,6 @@ class PrinterADS1100:
 def load_config_prefix(config):
     logging.info('load_config_prefix')
     return PrinterADS1100(config)
+def load_config(config):
+    logging.info('load_config')
+    return PrinterADS1100(config)
