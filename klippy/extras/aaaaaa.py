@@ -22,6 +22,7 @@ class ADS1100Error(Exception):
 class MCU_ADS1100:
     def __init__(self, config):
         self._printer = config.get_printer()
+        self._reactor = self._printer.get_reactor()
         self._name = config.get_name().split()[1]
         self._i2c = bus.MCU_I2C_from_config(config,
                                             default_addr=ADS1100_CHIP_ADDR, default_speed=ADS1100_I2C_SPEED)
@@ -62,6 +63,7 @@ class MCU_ADS1100:
         self._printer.register_event_handler("klippy:ready", self._handle_ready)
 
         self.register_commands(self._name)
+        self.setup_minmax(0.03,15)
 
 
     def get_mcu(self):
