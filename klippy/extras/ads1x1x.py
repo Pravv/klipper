@@ -194,9 +194,10 @@ class ADS1X1X:
     def _sample_ads1x1(cls, eventtime):
         # Initialize
         measured_time = None
+
         if (cls.current_sensor is None):
-            logging.info(cls.sensor_instances.last)
             cls.current_sensor = cls.sensor_instances.last
+
         if (cls.current_operation is None):
             cls.current_operation = ADS1X1_OPERATIONS['SET_MUX']
 
@@ -213,7 +214,8 @@ class ADS1X1X:
                 # Set channel on current sensor, initiate conversion
                 try:
                     logging.info('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Costam mux')
-                    cls.write_register(cls.current_sensor.data.chip_addr, ADS1X1X_REG_POINTER['CONFIG'], cls.current_sensor.data.config)
+                    cls.write_register(cls.current_sensor.data.chip_addr, ADS1X1X_REG_POINTER['CONFIG'],
+                                       cls.current_sensor.data.config)
                 except Exception:
                     logging.exception("ads1x1x: Error triggering mux")
                     cls.current_sensor.data.temp = 0.0
@@ -224,7 +226,8 @@ class ADS1X1X:
                 if (cls.current_operation == ADS1X1_OPERATIONS['READ_CONVERSION']):
                     # Read result
                     try:
-                        sample = cls.read_register(cls.current_sensor.data.chip_addr, ADS1X1X_REG_POINTER['CONVERSION'], 2)
+                        sample = cls.read_register(cls.current_sensor.data.chip_addr, ADS1X1X_REG_POINTER['CONVERSION'],
+                                                   2)
                     except Exception:
                         logging.exception("ads1x1x: Error reading data")
                         cls.current_sensor.data.temp = 0.0
@@ -234,14 +237,11 @@ class ADS1X1X:
                         return measured_time + cls.report_time / len(ADS1X1_OPERATIONS)
                         # return cls.reactor.NEVER
                     # Calc temp
-                    cls.current_sensor.data.temp = \
-                        cls.current_sensor.data.degrees_from_sample(sample)
+                    cls.current_sensor.data.temp = cls.current_sensor.data.degrees_from_sample(sample)
                     # Publish result
                     measured_time = cls.reactor.monotonic()
-                    cls.current_sensor.data._callback( \
-                        cls.current_sensor.data.mcu.estimated_print_time( \
-                            measured_time), \
-                        cls.current_sensor.data.temp)
+                    cls.current_sensor.data._callback(cls.current_sensor.data.mcu.estimated_print_time(measured_time),
+                                                      cls.current_sensor.data.temp)
                     # Move to next sensor
                     cls.current_sensor = cls.current_sensor.next
                     # Set next operation
@@ -257,7 +257,6 @@ class ADS1X1X:
         # read a single register
         params = cls.current_sensor.data.i2c.i2c_read([reg], read_len)
         buff = bytearray(params['response'])
-        logging.info(buff)
         return (buff[0] << 8 | buff[1])
 
     @classmethod
@@ -274,55 +273,33 @@ class ADS1X1X:
         self.printer = config.get_printer()
         self.name = config.get_name().split()[-1]
         #   self.i2c_broadcast = bus.MCU_I2C_from_config(config, 0x00, I2C_SPEED)
-      #  self.i2c = {0x48: bus.MCU_I2C_from_config(config, 0x48, I2C_SPEED)}
+        #  self.i2c = {0x48: bus.MCU_I2C_from_config(config, 0x48, I2C_SPEED)}
         self.i2c = bus.MCU_I2C_from_config(config, default_addr=0x48, default_speed=100000)
 
-        self.chip = config.getint('ads1x1_chip'
-                                  , minval=ADS1X1X_CHIP_TYPE['ADS1013']
-                                  , maxval=ADS1X1X_CHIP_TYPE['ADS1115'])
-        self.chip_addr = config.getint('ads1x1_addr'
-                                       , ADS1X1X_CHIP_ADDR['GND']
-                                       , minval=ADS1X1X_CHIP_ADDR['GND']
-                                       , maxval=ADS1X1X_CHIP_ADDR['SCL'])
-        self.speed = config.getint('ads1x1_i2c_speed'
-                                   , ADS1X1X_I2C_SPEED['ADS101x_1600']
-                                   , minval=ADS1X1X_I2C_SPEED['ADS101x_128']
-                                   , maxval=ADS1X1X_I2C_SPEED['ADS111x_860'])
-        self.mux = config.getint('ads1x1_mux'
-                                 , ADS1X1X_MUX['MUX_SINGLE_0']
-                                 , minval=ADS1X1X_MUX['MUX_DIFF_0_1']
-                                 , maxval=ADS1X1X_MUX['MUX_SINGLE_3'])
-        self.pga = config.getint('ads1x1_pga'
-                                 , ADS1X1X_PGA['PGA_4096']
-                                 , minval=ADS1X1X_PGA['PGA_6144']
-                                 , maxval=ADS1X1X_PGA['PGA_256'])
-        self.mode = config.getint('ads1x1_mode'
-                                  , ADS1X1X_MODE['MODE_SINGLE_SHOT']
-                                  , minval=ADS1X1X_MODE['MODE_CONTINUOUS']
-                                  , maxval=ADS1X1X_MODE['MODE_SINGLE_SHOT'])
-        self.comp_mode = config.getint('ads1x1_comp_mode'
-                                       , ADS1X1X_COMPARATOR_MODE['TRADITIONAL']
-                                       , minval=ADS1X1X_COMPARATOR_MODE['TRADITIONAL']
-                                       , maxval=ADS1X1X_COMPARATOR_MODE['WINDOW'])
-        self.comp_polarity = config.getint('ads1x1_comp_polarity'
-                                           , ADS1X1X_COMPARATOR_POLARITY['ACTIVE_LO']
-                                           , minval=ADS1X1X_COMPARATOR_POLARITY['ACTIVE_LO']
-                                           , maxval=ADS1X1X_COMPARATOR_POLARITY['ACTIVE_HI'])
-        self.comp_latching = config.getint('ads1x1_comp_latching'
-                                           , ADS1X1X_COMPARATOR_LATCHING['NON_LATCHING']
-                                           , minval=ADS1X1X_COMPARATOR_LATCHING['NON_LATCHING']
-                                           , maxval=ADS1X1X_COMPARATOR_LATCHING['LATCHING'])
-        self.comp_queue = config.getint('ads1x1_comp_queue'
-                                        , ADS1X1X_COMPARATOR_QUEUE['QUEUE_NONE']
-                                        , minval=ADS1X1X_COMPARATOR_QUEUE['QUEUE_1']
-                                        , maxval=ADS1X1X_COMPARATOR_QUEUE['QUEUE_NONE'])
-
-        #         if( self.chip_addr not in ADS1X1X.i2c):
-        #             logging.info('-----------------------------------------------------Adding chip to i2c')
-        #             ADS1X1X.i2c[self.chip_addr] = bus.MCU_I2C_from_config(config
-        #                 , self.chip_addr, I2C_SPEED)
-        #         else:
-        # Dummy read of parameters to avoid config error
+        self.chip = config.getint('ads1x1_chip', minval=ADS1X1X_CHIP_TYPE['ADS1013'],
+                                  maxval=ADS1X1X_CHIP_TYPE['ADS1115'])
+        self.chip_addr = config.getint('ads1x1_addr', ADS1X1X_CHIP_ADDR['GND'], minval=ADS1X1X_CHIP_ADDR['GND'],
+                                       maxval=ADS1X1X_CHIP_ADDR['SCL'])
+        self.speed = config.getint('ads1x1_i2c_speed', ADS1X1X_I2C_SPEED['ADS101x_1600'],
+                                   minval=ADS1X1X_I2C_SPEED['ADS101x_128'], maxval=ADS1X1X_I2C_SPEED['ADS111x_860'])
+        self.mux = config.getint('ads1x1_mux', ADS1X1X_MUX['MUX_SINGLE_0'], minval=ADS1X1X_MUX['MUX_DIFF_0_1'],
+                                 maxval=ADS1X1X_MUX['MUX_SINGLE_3'])
+        self.pga = config.getint('ads1x1_pga', ADS1X1X_PGA['PGA_4096'], minval=ADS1X1X_PGA['PGA_6144'],
+                                 maxval=ADS1X1X_PGA['PGA_256'])
+        self.mode = config.getint('ads1x1_mode', ADS1X1X_MODE['MODE_SINGLE_SHOT'],
+                                  minval=ADS1X1X_MODE['MODE_CONTINUOUS'], maxval=ADS1X1X_MODE['MODE_SINGLE_SHOT'])
+        self.comp_mode = config.getint('ads1x1_comp_mode', ADS1X1X_COMPARATOR_MODE['TRADITIONAL'],
+                                       minval=ADS1X1X_COMPARATOR_MODE['TRADITIONAL'],
+                                       maxval=ADS1X1X_COMPARATOR_MODE['WINDOW'])
+        self.comp_polarity = config.getint('ads1x1_comp_polarity', ADS1X1X_COMPARATOR_POLARITY['ACTIVE_LO'],
+                                           minval=ADS1X1X_COMPARATOR_POLARITY['ACTIVE_LO'],
+                                           maxval=ADS1X1X_COMPARATOR_POLARITY['ACTIVE_HI'])
+        self.comp_latching = config.getint('ads1x1_comp_latching', ADS1X1X_COMPARATOR_LATCHING['NON_LATCHING'],
+                                           minval=ADS1X1X_COMPARATOR_LATCHING['NON_LATCHING'],
+                                           maxval=ADS1X1X_COMPARATOR_LATCHING['LATCHING'])
+        self.comp_queue = config.getint('ads1x1_comp_queue', ADS1X1X_COMPARATOR_QUEUE['QUEUE_NONE'],
+                                        minval=ADS1X1X_COMPARATOR_QUEUE['QUEUE_1'],
+                                        maxval=ADS1X1X_COMPARATOR_QUEUE['QUEUE_NONE'])
 
         config.get('i2c_mcu', 'mcu')
         config.getint('i2c_speed', 100000)
@@ -332,8 +309,8 @@ class ADS1X1X:
         # Configure probe on sensor to use
         self.adc_voltage = config.getfloat('adc_voltage', 5., above=0.)
         self.voltage_offset = config.getfloat('voltage_offset', 0.0)
-        self.pullup_resistor = config.getfloat('pullup_resistor', 4700.,
-                                               above=0.)
+        self.pullup_resistor = config.getfloat('pullup_resistor', 4700., above=0.)
+
         # Find probe for voltage to temp conversion function/table
         for probe_type, params in adc_temperature.DefaultVoltageSensors:
             if (probe_type == config.get('probe_type')):
@@ -343,9 +320,10 @@ class ADS1X1X:
         if (probe_type != config.get('probe_type')):
             for probe_type, params in adc_temperature.DefaultResistanceSensors:
                 if (probe_type == config.get('probe_type')):
-                    self.converter = \
-                        adc_temperature.ConvertADCtoTemperature(adc_temperature.LinearResistance(config, params))
+                    self.converter = adc_temperature.ConvertADCtoTemperature(
+                        adc_temperature.LinearResistance(config, params))
                     break
+
         # Attempt to match against existing thermistors, generate conversion
         # table
         if (probe_type != config.get('probe_type')):
@@ -353,56 +331,41 @@ class ADS1X1X:
             probe_config = pheaters.sensor_factories[config.get('probe_type')](config).adc_convert
             all_temps = [float(i) for i in range(1, 351)]
             adcs = [(t, probe_config.calc_adc(t)) for t in all_temps]
-            rs = [(t, self.pullup_resistor * adc / (1.0 - adc)) \
-                  for t, adc in adcs]
+            rs = [(t, self.pullup_resistor * adc / (1.0 - adc)) for t, adc in adcs]
             if (probe_config is not None):
-                self.converter = adc_temperature.ConvertADCtoTemperature( \
-                    adc_temperature.LinearResistance(config, rs))
+                self.converter = adc_temperature.ConvertADCtoTemperature(adc_temperature.LinearResistance(config, rs))
                 probe_type = config.get('probe_type')
 
         if (probe_type != config.get('probe_type')):
-            logging.error("Probe '%s' not found in adc_temperature for %s" \
-                          % (config.get('probe_type'), self.name));
+            logging.error("Probe '%s' not found in adc_temperature for %s" % (config.get('probe_type'), self.name))
         self.mcu = self.i2c.get_mcu()
         # Initialize and keep the smallest time
         if (ADS1X1X.report_time is None):
-            ADS1X1X.report_time = config.getfloat('ads1x1_report_time'
-                                                  , ADS1X1X_REPORT_TIME
-                                                  , minval=ADS1X1X_MIN_REPORT_TIME)
+            ADS1X1X.report_time = config.getfloat('ads1x1_report_time', ADS1X1X_REPORT_TIME, minval=ADS1X1X_MIN_REPORT_TIME)
         else:
-            report_time = config.getfloat('ads1x1_report_time'
-                                          , ADS1X1X_REPORT_TIME
-                                          , minval=ADS1X1X_MIN_REPORT_TIME)
+            report_time = config.getfloat('ads1x1_report_time', ADS1X1X_REPORT_TIME, minval=ADS1X1X_MIN_REPORT_TIME)
             ADS1X1X.report_time = min(ADS1X1X.report_time, report_time)
 
         # Set up 2-byte configuration that will be used with each request
         self.config = 0
-        self.config |= (ADS1X1X_OS['OS_SINGLE'] \
-                        & ADS1X1X_REG_CONFIG['OS_MASK'])
+        self.config |= (ADS1X1X_OS['OS_SINGLE'] & ADS1X1X_REG_CONFIG['OS_MASK'])
         self.config |= (self.mux & ADS1X1X_REG_CONFIG['MULTIPLEXER_MASK'])
         self.config |= (self.pga & ADS1X1X_REG_CONFIG['PGA_MASK'])
         self.config |= (self.mode & ADS1X1X_REG_CONFIG['MODE_MASK'])
         self.config |= (self.speed & ADS1X1X_REG_CONFIG['DATA_RATE_MASK'])
-        self.config |= (self.comp_mode \
-                        & ADS1X1X_REG_CONFIG['COMPARATOR_MODE_MASK'])
-        self.config |= (self.comp_polarity \
-                        & ADS1X1X_REG_CONFIG['COMPARATOR_POLARITY_MASK'])
-        self.config |= (self.comp_latching \
-                        & ADS1X1X_REG_CONFIG['COMPARATOR_LATCHING_MASK'])
-        self.config |= (self.comp_queue \
-                        & ADS1X1X_REG_CONFIG['COMPARATOR_QUEUE_MASK'])
+        self.config |= (self.comp_mode & ADS1X1X_REG_CONFIG['COMPARATOR_MODE_MASK'])
+        self.config |= (self.comp_polarity & ADS1X1X_REG_CONFIG['COMPARATOR_POLARITY_MASK'])
+        self.config |= (self.comp_latching & ADS1X1X_REG_CONFIG['COMPARATOR_LATCHING_MASK'])
+        self.config |= (self.comp_queue & ADS1X1X_REG_CONFIG['COMPARATOR_QUEUE_MASK'])
 
-        logging.info("ADS1x1: Chip Type %#x Chip Addr %#x Pin ID %#x for %s" \
-                     % (self.chip, self.chip_addr, self.mux, self.name))
+        logging.info("ADS1x1: Chip Type %#x Chip Addr %#x Pin ID %#x for %s" % (self.chip, self.chip_addr, self.mux, self.name))
 
         self.temp = self.min_temp = self.max_temp = 0.0
 
         ADS1X1X.sensor_instances.add(self)
         self.printer.add_object("ads1x1 " + self.name, self)
-        self.printer.register_event_handler("klippy:connect",
-                                            self.handle_connect)
-        self.printer.register_event_handler("klippy:shutdown",
-                                            self.reset_all_devices)
+        self.printer.register_event_handler("klippy:connect", self.handle_connect)
+        self.printer.register_event_handler("klippy:shutdown", self.reset_all_devices)
 
     def handle_connect(self):
         logging.info('handle_connect')
@@ -432,7 +395,6 @@ class ADS1X1X:
         return self.report_time
 
     def degrees_from_sample(self, result):
-        logging.info('degrees_from_sample')
         # The sample is encoded in the top 12 or full 16 bits
         # Value's meaning is defined by ADS1X1X_REG_CONFIG['PGA_MASK']
         if self.chip == ADS1X1X_CHIP_TYPE['ADS1013'] \
@@ -446,20 +408,15 @@ class ADS1X1X:
         temp = self.converter.calcTemp((volts - self.voltage_offset) \
                                        / self.adc_voltage)
         # Debugging statement
-        logging.info( \
-            "ADS1x1 (%02x,%02x): Read %#x Volts %.3f Scale %.4f Temp %.3f"
-            % (self.chip_addr, self.mux, result, volts - self.voltage_offset
-               , (volts - self.voltage_offset) / self.adc_voltage, temp))
+        logging.info(
+            f"ADS1x1 ({self.chip_addr:02x},{self.mux:02x}): Read {result:#x} Volts {volts - self.voltage_offset:.3f} Scale {(volts - self.voltage_offset) / self.adc_voltage:.4f} Temp {temp:.3f}")
         # Check if result is within limits
         if temp < self.min_temp or temp > self.max_temp:
             self.printer.invoke_shutdown(
-                "ADS1X1X temperature %0.1f outside range of %0.1f:%.01f"
-                % (temp, self.min_temp, self.max_temp))
+                f"ADS1X1X temperature {temp:0.1f} outside range of {self.min_temp:0.1f}:{self.max_temp:.01f}")
         return temp
 
     def get_status(self, eventtime):
-        logging.info('get_status')
-        logging.info(self.temp)
         return {
             'temperature': round(self.temp, 2),
         }
