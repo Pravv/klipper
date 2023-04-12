@@ -212,8 +212,8 @@ class ADS1X1X:
             if (cls.current_operation == ADS1X1_OPERATIONS['SET_MUX']):
                 # Set channel on current sensor, initiate conversion
                 try:
-                    cls.write_register(cls.current_sensor.data.chip_addr, ADS1X1X_REG_POINTER['CONFIG'],
-                                       cls.current_sensor.data.config)
+                    logging.info('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Costam mux')
+                    cls.write_register(cls.current_sensor.data.chip_addr, ADS1X1X_REG_POINTER['CONFIG'], cls.current_sensor.data.config)
                 except Exception:
                     logging.exception("ads1x1x: Error triggering mux")
                     cls.current_sensor.data.temp = 0.0
