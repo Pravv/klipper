@@ -59,6 +59,7 @@ class MCU_ADS1100:
         return self._mcu
 
     def register_commands(self, name):
+        logging.info('registering commands: %s', (name))
         # Register commands
         gcode = self._printer.lookup_object('gcode')
         gcode.register_mux_command("TEST_ADC", "CHIP", name,
