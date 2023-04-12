@@ -92,6 +92,7 @@ class MCU_ADS1100:
         return self._last_value, self._last_time
 
     def _build_config(self):
+        logging.info('_build_config')
         if not self._sample_count:
             return
 
@@ -114,6 +115,7 @@ class MCU_ADS1100:
         self._norm = float(ADS1100_MAXVALUE_BY_RATE_TABLE[rate])
 
     def _handle_ready(self):
+        logging.info('_handle_ready')
         # configuration byte: continuous conversion (SC bit not set), selected
         # gain and SPS
         config = ADS1100_SAMPLE_RATE_TABLE[self._rate] << 2 \
