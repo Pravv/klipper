@@ -255,7 +255,7 @@ class ADS1X1X:
     @classmethod
     def read_register(cls, chip_addr, reg, read_len):
         # read a single register
-        params = ADS1X1X.i2c[chip_addr].i2c_read([reg], read_len)
+        params = cls.current_sensor.data.i2c[chip_addr].i2c_read([reg], read_len)
         buff = bytearray(params['response'])
         logging.info(buff)
         return (buff[0]<<8 | buff[1])
@@ -267,7 +267,7 @@ class ADS1X1X:
             ((data>>8) & 0xFF), # High byte
             (data & 0xFF), # Lo byte
         ]
-        ADS1X1X.i2c[chip_addr].i2c_write(data)
+        cls.current_sensor.data.i2c[chip_addr].i2c_write(data)
 
     def __init__(self, config):
         self.i2c_broadcast = bus.MCU_I2C_from_config(config, 0x00, I2C_SPEED)
@@ -366,7 +366,7 @@ class ADS1X1X:
         if(probe_type != config.get('probe_type')):
             logging.error("Probe '%s' not found in adc_temperature for %s" \
                 % (config.get('probe_type'), self.name));
-        self.mcu = ADS1X1X.i2c[self.chip_addr].get_mcu()
+        self.mcu = self.i2c[self.chip_addr].get_mcu()
         # Initialize and keep the smallest time
         if(ADS1X1X.report_time is None):
             ADS1X1X.report_time = config.getfloat('ads1x1_report_time'
