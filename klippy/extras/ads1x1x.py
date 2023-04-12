@@ -225,7 +225,10 @@ class ADS1X1X:
                     except Exception:
                         logging.exception("ads1x1x: Error reading data")
                         cls.current_sensor.data.temp = 0.0
-                        return cls.reactor.NEVER
+                        if(measured_time is None):
+                            measured_time = cls.reactor.monotonic()
+                        return measured_time + cls.report_time / len(ADS1X1_OPERATIONS)
+                        #return cls.reactor.NEVER
                     # Calc temp
                     cls.current_sensor.data.temp = \
                         cls.current_sensor.data.degrees_from_sample(sample)
