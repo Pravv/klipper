@@ -56,7 +56,7 @@ class MCU_ADS1100:
 
     def register_commands(self, name):
         # Register commands
-        gcode = self.printer.lookup_object('gcode')
+        gcode = self._printer.lookup_object('gcode')
         gcode.register_mux_command("TEST_ADC", "CHIP", name,
                                    self.cmd_ACCELEROMETER_MEASURE,
                                    desc=self.cmd_ACCELEROMETER_MEASURE_help)
