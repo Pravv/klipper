@@ -174,7 +174,7 @@ class PrinterADS1100:
         self._mcu = self._i2c.get_mcu()
         self._gain = config.getint('gain', 1, minval=1)
         if self._gain not in ADS1100_GAIN_TABLE:
-            raise self.printer.config_error("ADS1100 does not support the "
+            raise self._printer.config_error("ADS1100 does not support the "
                                             "selected gain: %d" % self._gain)
         # Register setup_pin
         ppins = self._printer.lookup_object('pins')
@@ -182,9 +182,10 @@ class PrinterADS1100:
 
     def setup_pin(self, pin_type, pin_params):
         if pin_type != 'adc':
-            raise self.printer.config_error("ADS1100 only supports adc pins")
+            raise self._printer.config_error("ADS1100 only supports adc pins")
         return MCU_ADS1100(self)
 
 
 def load_config_prefix(config):
+    logging.info('load_config_prefix')
     return PrinterADS1100(config)
