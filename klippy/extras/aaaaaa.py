@@ -40,6 +40,9 @@ class MCU_ADS1100:
         self._state = 0
         self._error_count = 0
 
+        self._rate = 0
+        self._norm = 0
+
         self._sample_time = 0
         self._sample_count = 0
         self._minval = 0
