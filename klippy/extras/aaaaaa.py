@@ -181,8 +181,8 @@ class PrinterADS1100:
         ppins.register_chip(self._name, self)
 
     def setup_pin(self, pin_type, pin_params):
-        if pin_type != 'adc':
-            raise self._printer.config_error("ADS1100 only supports adc pins")
+        #//if pin_type != 'adc':
+        #     raise self._printer.config_error("ADS1100 only supports adc pins")
         return MCU_ADS1100(self)
 
 
