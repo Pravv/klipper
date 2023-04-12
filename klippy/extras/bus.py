@@ -170,7 +170,7 @@ class MCU_I2C:
         self.i2c_write_cmd = self.mcu.lookup_command(
             "i2c_write oid=%c data=%*s", cq=self.cmd_queue)
 
-           read_cmd_queue = self.mcu.lookup_query_command(
+        read_cmd_queue = self.mcu.lookup_query_command(
                         "i2c_read oid=%c reg=%*s read_len=%u",
                         "i2c_read_response oid=%c response=%*s", oid=self.oid,
                         cq=self.cmd_queue)
