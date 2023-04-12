@@ -18,14 +18,74 @@ ADS1100_GAIN_TABLE = {1: 0, 2: 1, 4: 2, 8: 3}
 class ADS1100Error(Exception):
     pass
 
+class SoftwareI2C:
+    def __init__(self, config, addr):
+        self.addr = addr << 1
+        self.update_pin_cmd = None
+        # Lookup pins
+        ppins = config.get_printer().lookup_object('pins')
+        scl_pin = config.get('scl_pin')
+        scl_params = ppins.lookup_pin(scl_pin, share_type='sw_scl')
+        self.mcu = scl_params['chip']
+        self.scl_pin = scl_params['pin']
+        self.scl_main = scl_params.get('class')
+        if self.scl_main is None:
+            self.scl_main = scl_params['class'] = self
+            self.scl_oid = self.mcu.create_oid()
+            self.cmd_queue = self.mcu.alloc_command_queue()
+            self.mcu.register_config_callback(self.build_config)
+        else:
+            self.scl_oid = self.scl_main.scl_oid
+            self.cmd_queue = self.scl_main.cmd_queue
+        sda_params = ppins.lookup_pin(config.get('sda_pin'))
+        self.sda_oid = self.mcu.create_oid()
+        if sda_params['chip'] != self.mcu:
+            raise ppins.error("%s: scl_pin and sda_pin must be on same mcu" % (
+                config.get_name(),))
+        self.mcu.add_config_cmd("config_digital_out oid=%d pin=%s"
+                                " value=%d default_value=%d max_duration=%d" % (
+                                    self.sda_oid, sda_params['pin'], 1, 1, 0))
+    def get_mcu(self):
+        return self.mcu
+    def build_config(self):
+        self.mcu.add_config_cmd("config_digital_out oid=%d pin=%s value=%d"
+                                " default_value=%d max_duration=%d" % (
+                                    self.scl_oid, self.scl_pin, 1, 1, 0))
+        self.update_pin_cmd = self.mcu.lookup_command(
+            "update_digital_out oid=%c value=%c", cq=self.cmd_queue)
+    def i2c_write(self, msg, minclock=0, reqclock=0):
+        msg = [self.addr] + msg
+        send = self.scl_main.update_pin_cmd.send
+        # Send ack
+        send([self.sda_oid, 0], minclock=minclock, reqclock=reqclock)
+        send([self.scl_oid, 0], minclock=minclock, reqclock=reqclock)
+        # Send bytes
+        sda_last = 0
+        for data in msg:
+            # Transmit 8 data bits
+            for i in range(8):
+                sda_next = not not (data & (0x80 >> i))
+                if sda_last != sda_next:
+                    sda_last = sda_next
+                    send([self.sda_oid, sda_last],
+                         minclock=minclock, reqclock=reqclock)
+                send([self.scl_oid, 1], minclock=minclock, reqclock=reqclock)
+                send([self.scl_oid, 0], minclock=minclock, reqclock=reqclock)
+            # Transmit clock for ack
+            send([self.scl_oid, 1], minclock=minclock, reqclock=reqclock)
+            send([self.scl_oid, 0], minclock=minclock, reqclock=reqclock)
+        # Send stop
+        if sda_last:
+            send([self.sda_oid, 0], minclock=minclock, reqclock=reqclock)
+        send([self.scl_oid, 1], minclock=minclock, reqclock=reqclock)
+        send([self.sda_oid, 1], minclock=minclock, reqclock=reqclock)
 
 class MCU_ADS1100:
     def __init__(self, config):
         self._printer = config.get_printer()
         self._reactor = self._printer.get_reactor()
         self._name = config.get_name().split()[1]
-        self._i2c = bus.MCU_I2C_from_config(config,
-                                            default_addr=ADS1100_CHIP_ADDR, default_speed=ADS1100_I2C_SPEED)
+        self._i2c = SoftwareI2C(config, ADS1100_CHIP_ADDR)#bus.MCU_I2C_from_config(config, default_addr=ADS1100_CHIP_ADDR, default_speed=ADS1100_I2C_SPEED)
         self._mcu = self._i2c.get_mcu()
         self._gain = config.getint('gain', 1, minval=1)
         if self._gain not in ADS1100_GAIN_TABLE:
@@ -123,8 +183,7 @@ class MCU_ADS1100:
         logging.info('_handle_ready')
         # configuration byte: continuous conversion (SC bit not set), selected
         # gain and SPS
-        config = ADS1100_SAMPLE_RATE_TABLE[self._rate] << 2 \
-                 | ADS1100_GAIN_TABLE[self._gain]
+        config = ADS1100_SAMPLE_RATE_TABLE[self._rate] << 2 | ADS1100_GAIN_TABLE[self._gain]
 
         # write the 8 bit configuration register
         self._i2c.i2c_write([config])
