@@ -1843,15 +1843,19 @@ supplementing.</p>
 for signal integrity over a long distance. If you still experience signal
 integrity issues (SPI/I2C errors):</p>
 <ul>
-<li>Double check the wiring with a digital multimeter for:</li>
+<li>Double check the wiring with a digital multimeter for:<ul>
 <li>Correct connections when turned off (continuity)</li>
 <li>Correct power and ground voltages</li>
-<li>I2C only:</li>
+</ul>
+</li>
+<li>I2C only:<ul>
 <li>Check the SCL and SDA lines' resistances to 3.3V are in the range of 900
-      ohms to 1.8K</li>
+  ohms to 1.8K</li>
 <li>For full technical details consult <a href="https://www.pololu.com/file/0J435/UM10204.pdf">chapter 7 of the I2C-bus specification
-      and user manual UM10204</a>
-      for <em>fast-mode</em></li>
+  and user manual UM10204</a>
+  for <em>fast-mode</em></li>
+</ul>
+</li>
 <li>Shorten the cable</li>
 </ul>
 <p>Connect ethernet cable shielding only to the MCU board/Pi ground.</p>
@@ -2032,7 +2036,7 @@ smaller parallel resistors.</p>
 <tbody>
 <tr>
 <td align="center">VCC</td>
-<td align="center">39</td>
+<td align="center">36</td>
 <td align="center">3v3</td>
 </tr>
 <tr>
@@ -2226,7 +2230,7 @@ probe_points:
     100, 100, 20  # an example
 
 [static_digital_output pico_3V3pwm] # Improve power stability
-pin: pico:gpio23
+pins: pico:gpio23
 </code></pre></div>
 
 <h4 id="configure-mpu-9520-compatibles-with-avr">Configure MPU-9520 Compatibles with AVR<a class="headerlink" href="#configure-mpu-9520-compatibles-with-avr" title="Permanent link">&para;</a></h4>
