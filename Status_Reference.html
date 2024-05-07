@@ -964,13 +964,6 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#manual_stepper" class="md-nav__link">
-    manual_stepper
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#mcu" class="md-nav__link">
     mcu
   </a>
@@ -1586,6 +1579,20 @@
 
             
           
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="Eddy_Probe.html" class="md-nav__link">
+        Eddy Current Inductive probe
+      </a>
+    </li>
+  
+
+            
+          
         </ul>
       </nav>
     </li>
@@ -1783,13 +1790,6 @@
         <li class="md-nav__item">
   <a href="#manual_probe" class="md-nav__link">
     manual_probe
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#manual_stepper" class="md-nav__link">
-    manual_stepper
   </a>
   
 </li>
@@ -2273,13 +2273,6 @@ understands it).</li>
 <li><code>z_position_lower</code>: Last probe attempt just lower than the current height.</li>
 <li><code>z_position_upper</code>: Last probe attempt just greater than the current height.</li>
 </ul>
-<h2 id="manual_stepper">manual_stepper<a class="headerlink" href="#manual_stepper" title="Permanent link">&para;</a></h2>
-<p>The following information is available in the
-<code>manual_stepper</code> object:</p>
-<ul>
-<li><code>enabled</code>: Returns True if the stepper is currently enabled.</li>
-<li><code>position</code>: The requested position.</li>
-</ul>
 <h2 id="mcu">mcu<a class="headerlink" href="#mcu" title="Permanent link">&para;</a></h2>
 <p>The following information is available in
 <a href="Config_Reference.html#mcu">mcu</a> and
@@ -2432,6 +2425,7 @@ object is available if any stepper is defined):</p>
 <p>The following information is available in</p>
 <p><a href="Config_Reference.html#bmp280bme280bme680-temperature-sensor">bme280 config_section_name</a>,
 <a href="Config_Reference.html#htu21d-sensor">htu21d config_section_name</a>,
+<a href="Config_Reference.html#sht31-sensor">sht3x config_section_name</a>,
 <a href="Config_Reference.html#lm75-temperature-sensor">lm75 config_section_name</a>,
 <a href="Config_Reference.html#host-temperature-sensor">temperature_host config_section_name</a>
 and
@@ -2440,7 +2434,7 @@ objects:</p>
 <ul>
 <li><code>temperature</code>: The last read temperature from the sensor.</li>
 <li><code>humidity</code>, <code>pressure</code>, <code>gas</code>: The last read values from the sensor
-  (only on bme280, htu21d, and lm75 sensors).</li>
+  (only on bme280, htu21d, sht3x and lm75 sensors).</li>
 </ul>
 <h2 id="temperature_fan">temperature_fan<a class="headerlink" href="#temperature_fan" title="Permanent link">&para;</a></h2>
 <p>The following information is available in
